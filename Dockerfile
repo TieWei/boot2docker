@@ -172,16 +172,14 @@ RUN depmod -a -b "$ROOTFS" "$KERNEL_VERSION-boot2docker"
 COPY VERSION $ROOTFS/etc/version
 RUN cp -v "$ROOTFS/etc/version" /tmp/iso/version
 
-ENV DOCKER_CHANNEL edge
+COPY CHANNEL $ROOTFS/etc/channel
+RUN cp -v "$ROOTFS/etc/channel" /tmp/iso/channel
 
 # Get the Docker binaries with version that matches our boot2docker version.
 RUN set -ex; \
 	version="$(cat "$ROOTFS/etc/version")"; \
-	if [ "${version%-rc*}" != "$version" ]; then \
-# all the -rc* releases go in the "test" channel
-		DOCKER_CHANNEL='test'; \
-	fi; \
-	curl -fSL -o /tmp/dockerbin.tgz "https://download.docker.com/linux/static/$DOCKER_CHANNEL/x86_64/docker-$version.tgz"; \
+	channel="$(cat "$ROOTFS/etc/channel")"; \
+	curl -fSL -o /tmp/dockerbin.tgz "https://download.docker.com/linux/static/$channel/x86_64/docker-$version.tgz"; \
 	tar -zxvf /tmp/dockerbin.tgz -C "$ROOTFS/usr/local/bin" --strip-components=1; \
 	rm /tmp/dockerbin.tgz; \
 	chroot "$ROOTFS" docker -v
