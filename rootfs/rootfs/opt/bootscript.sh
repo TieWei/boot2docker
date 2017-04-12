@@ -48,9 +48,6 @@ if grep -q '^docker:' /etc/passwd; then
     fi
 fi
 
-# Automount Shared Folders (VirtualBox, etc.); start VBox services
-/etc/rc.d/vbox
-
 # Configure SSHD
 /etc/rc.d/sshd
 
@@ -79,21 +76,3 @@ if [ -e /var/lib/boot2docker/bootlocal.sh ]; then
     /bin/sh /var/lib/boot2docker/bootlocal.sh > /var/log/bootlocal.log 2>&1 &
     echo "------------------- ran /var/lib/boot2docker/bootlocal.sh"
 fi
-
-# Execute automated_script
-# disabled - this script was written assuming bash, which we no longer have.
-#/etc/rc.d/automated_script.sh
-
-# Run Hyper-V KVP Daemon
-if modprobe hv_utils &> /dev/null; then
-    /usr/sbin/hv_kvp_daemon
-fi
-
-# Launch vmware-tools
-/etc/rc.d/vmtoolsd
-
-# Launch xenserver-tools
-/etc/rc.d/xedaemon
-
-# Load Parallels Tools daemon
-/etc/rc.d/prltoolsd
